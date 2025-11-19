@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace CMCS_POE.Models
 {
@@ -10,7 +11,6 @@ namespace CMCS_POE.Models
         [Key]
         public int Id { get; set; }
 
-        // Foreign key to the Lecturer (AppUser)
         [Required]
         public string LecturerId { get; set; }
 
@@ -26,7 +26,7 @@ namespace CMCS_POE.Models
         public decimal HourlyRate { get; set; }
 
         [Required]
-        public string Status { get; set; } = "Pending"; // Default status
+        public string Status { get; set; } = "Pending"; 
 
         public DateTime SubmissionDate { get; set; } = DateTime.Now;
 
@@ -34,7 +34,13 @@ namespace CMCS_POE.Models
 
         public string? Notes { get; set; }
 
-        // Navigation property for uploaded documents
         public ICollection<DocumentUpload> DocumentUploads { get; set; }
+
+        [NotMapped]
+        public IFormFile Document { get; set; }
+
+        public string DocumentName { get; set; }
+        public string DocumentPath { get; set; }
+
     }
 }
