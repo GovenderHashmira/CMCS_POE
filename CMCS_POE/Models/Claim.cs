@@ -26,6 +26,10 @@ namespace CMCS_POE.Models
         public decimal HourlyRate { get; set; }
 
         [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TotalPayment { get; set; }
+
+        [Required]
         public string Status { get; set; } = "Pending"; 
 
         public DateTime SubmissionDate { get; set; } = DateTime.Now;
