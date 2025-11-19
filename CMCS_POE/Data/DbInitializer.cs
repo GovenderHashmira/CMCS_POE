@@ -1,53 +1,63 @@
-﻿using CMCS_POE.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using CMCS_POE.Models;
 
 namespace CMCS_POE.Data
 {
     public static class DbInitializer
     {
-        public static async Task SeedRolesAndAdminAsync(IServiceProvider serviceProvider)
+        public static async Task SeedRolesAndUsersAsync(
+            UserManager<AppUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
-            // Get RoleManager and UserManager from DI
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+            string[] roles = { "HR", "Lecturer", "Coordinator" };
 
-            // 1. Seed Roles
-            string[] roles = { "HR", "Lecturer", "Coordinator", "Manager" };
-
+            // Create roles if missing
             foreach (var role in roles)
             {
                 if (!await roleManager.RoleExistsAsync(role))
-                {
                     await roleManager.CreateAsync(new IdentityRole(role));
-                }
             }
 
-            // 2. Seed Default HR Account
-            var defaultHR = await userManager.FindByEmailAsync("hr@cmcs.com");
-
-            if (defaultHR == null)
+            // Seed HR
+            if (await userManager.FindByEmailAsync("hr@test.com") == null)
             {
-                var hrUser = new AppUser
+                var hr = new AppUser
                 {
-                    UserName = "hr@cmcs.com",
-                    Email = "hr@cmcs.com",
-                    FirstName = "Default",
-                    LastName = "HR",
-                    HourlyRate = 0,      // HR does not need an hourly rate but can remain 0
-                    RoleName = "HR"
+                    UserName = "hr@test.com",
+                    Email = "hr@test.com",
+                    FirstName = "HR",
+                    LastName = "User"
                 };
+                await userManager.CreateAsync(hr, "Password123!");
+                await userManager.AddToRoleAsync(hr, "HR");
+            }
 
-                var result = await userManager.CreateAsync(hrUser, "Hr123!@#"); // Default password
+            // Seed Lecturer
+            if (await userManager.FindByEmailAsync("lecturer@test.com") == null)
+            {
+                var lecturer = new AppUser
+                {
+                    UserName = "lecturer@test.com",
+                    Email = "lecturer@test.com",
+                    FirstName = "Lecturer",
+                    LastName = "User"
+                };
+                await userManager.CreateAsync(lecturer, "Password123!");
+                await userManager.AddToRoleAsync(lecturer, "Lecturer");
+            }
 
-                if (result.Succeeded)
+            // Seed Coordinator
+            if (await userManager.FindByEmailAsync("coord@test.com") == null)
+            {
+                var coord = new AppUser
                 {
-                    await userManager.AddToRoleAsync(hrUser, "HR");
-                }
-                else
-                {
-                    throw new Exception("Failed to create default HR user: "
-                                        + string.Join(", ", result.Errors.Select(e => e.Description)));
-                }
+                    UserName = "coord@test.com",
+                    Email = "coord@test.com",
+                    FirstName = "Coordinator",
+                    LastName = "User"
+                };
+                await userManager.CreateAsync(coord, "Password123!");
+                await userManager.AddToRoleAsync(coord, "Coordinator");
             }
         }
     }

@@ -1,8 +1,13 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "CMCS Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2>Welcome to the Contract Monthly Claim System</h2>
+<p>Select your role to continue:</p>
+
+<div class="d-flex flex-column align-items-center mt-5">
+    <a href="@Url.Action("Index", "HR")" class="btn btn-primary mb-3" style="width:200px;">HR Dashboard</a>
+    <a href="@Url.Action("SubmitClaim", "Lecturer")" class="btn btn-success mb-3" style="width:200px;">Lecturer Dashboard</a>
+    <a href="@Url.Action("AllClaims", "Coordinator")" class="btn btn-warning mb-3" style="width:200px;">Coordinator Dashboard</a>
 </div>
+
