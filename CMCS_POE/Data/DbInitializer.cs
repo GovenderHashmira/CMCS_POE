@@ -11,7 +11,7 @@ namespace CMCS_POE.Data
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
 
-            //  Roles
+            // 1. Seed Roles
             string[] roles = { "HR", "Lecturer", "Coordinator", "Manager" };
 
             foreach (var role in roles)
@@ -22,8 +22,9 @@ namespace CMCS_POE.Data
                 }
             }
 
-            //  Default HR User
+            // 2. Seed Default HR Account
             var defaultHR = await userManager.FindByEmailAsync("hr@cmcs.com");
+
             if (defaultHR == null)
             {
                 var hrUser = new AppUser
@@ -32,15 +33,20 @@ namespace CMCS_POE.Data
                     Email = "hr@cmcs.com",
                     FirstName = "Default",
                     LastName = "HR",
-                    HourlyRate = 0,
-                    RoleName = "HR" 
+                    HourlyRate = 0,      // HR does not need an hourly rate but can remain 0
+                    RoleName = "HR"
                 };
 
+                var result = await userManager.CreateAsync(hrUser, "Hr123!@#"); // Default password
 
-                var result = await userManager.CreateAsync(hrUser, "Hr123!@#"); 
                 if (result.Succeeded)
                 {
                     await userManager.AddToRoleAsync(hrUser, "HR");
+                }
+                else
+                {
+                    throw new Exception("Failed to create default HR user: "
+                                        + string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
             }
         }
