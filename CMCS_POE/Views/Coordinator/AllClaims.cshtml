@@ -1,0 +1,56 @@
+﻿@model IEnumerable<CMCS_POE.Models.Claim>
+
+@{
+    ViewData["Title"] = "All Claims";
+}
+
+<h2>All Submitted Claims</h2>
+
+<table class="table table-bordered table-hover mt-3">
+    <thead>
+        <tr>
+            <th>Lecturer</th>
+            <th>Hours Worked</th>
+            <th>Hourly Rate</th>
+            <th>Status</th>
+            <th>Submission Date</th>
+            <th>Documents</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var claim in Model)
+        {
+            <tr>
+                <td>@claim.Lecturer?.FirstName @claim.Lecturer?.LastName</td>
+                <td>@claim.HoursWorked</td>
+                <td>@claim.HourlyRate</td>
+                <td>@claim.Status</td>
+                <td>@claim.SubmissionDate.ToString("yyyy-MM-dd")</td>
+
+                <td>
+                    @if (claim.DocumentUploads != null)
+                    {
+                        foreach (var doc in claim.DocumentUploads)
+                        {
+                            <a href="@doc.FilePath" target="_blank">@doc.FileName</a>
+                
+                            <br />
+                        }
+                    }
+                    else
+                    {
+                        <span>No Documents</span>
+                    }
+                </td>
+
+                <td>
+                    <a class="btn btn-info btn-sm" asp-action="ClaimDetails" asp-route-id="@claim.Id">View</a>
+                    <a class="btn btn-success btn-sm" asp-action="Approve" asp-route-id="@claim.Id">Approve</a>
+                    <a class="btn btn-danger btn-sm" asp-action="Reject" asp-route-id="@claim.Id">Reject</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
