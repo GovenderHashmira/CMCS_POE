@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CMCS_POE.Data;
+﻿using CMCS_POE.Data;
 using CMCS_POE.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace CMCS_POE.Controllers
 {
+    [Authorize(Roles = "Coordinator")]
     public class CoordinatorController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,12 +26,9 @@ namespace CMCS_POE.Controllers
         [HttpGet]
         public async Task<IActionResult> AllClaims()
         {
-            // Get all claims with related lecturer and documents
-            var claims = await _context.Claims
-                .Include(c => c.Lecturer)
-                .Include(c => c.DocumentUploads)
-                .ToListAsync();
-
+            var claims = await _context.Claims.Include(c => c.Lecturer)
+                                              .Include(c => c.DocumentUploads)
+                                              .ToListAsync();
             return View(claims);
         }
 
@@ -49,36 +48,45 @@ namespace CMCS_POE.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Approve(int id)
+        public async Task<IActionResult> Approve(int claimId)
         {
-            var claim = await _context.Claims.FindAsync(id);
+            // Find the claim by ID
+            var claim = await _context.Claims.Include(c => c.Lecturer)
+                                             .FirstOrDefaultAsync(c => c.Id == claimId);
             if (claim == null)
+            {
                 return NotFound();
+            }
 
+            // Update claim status and approval date
             claim.Status = "Approved";
             claim.ApprovalDate = DateTime.Now;
 
-            _context.Update(claim);
+            // Save changes to the database
             await _context.SaveChangesAsync();
 
+            // Redirect back to AllClaims view
             return RedirectToAction(nameof(AllClaims));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Reject(int id)
+        public async Task<IActionResult> Reject(int claimId)
         {
-            var claim = await _context.Claims.FindAsync(id);
+            var claim = await _context.Claims.Include(c => c.Lecturer)
+                                             .FirstOrDefaultAsync(c => c.Id == claimId);
             if (claim == null)
+            {
                 return NotFound();
+            }
 
             claim.Status = "Rejected";
             claim.ApprovalDate = DateTime.Now;
 
-            _context.Update(claim);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(AllClaims));
         }
+
     }
 }

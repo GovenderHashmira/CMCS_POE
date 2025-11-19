@@ -1,4 +1,5 @@
 ﻿using CMCS_POE.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using static System.Net.WebRequestMethods;
 
 namespace CMCS_POE.Controllers
 {
+    [Authorize(Roles = "Lecturer")]
     public class LecturerController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -62,8 +64,12 @@ namespace CMCS_POE.Controllers
                     await claim.Document.CopyToAsync(fileStream);
                 }
 
-                claim.DocumentPath = "/uploads/" + uniqueFileName;
-                claim.DocumentName = claim.Document.FileName;
+                claim.DocumentUploads.Add(new DocumentUpload
+                {
+                    DocumentName = claim.Document.FileName,
+                    DocumentPath = "/uploads/" + uniqueFileName,
+                    UploadDate = DateTime.Now
+                });
             }
 
             _context.Claims.Add(claim);

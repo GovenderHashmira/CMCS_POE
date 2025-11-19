@@ -16,12 +16,10 @@ namespace CMCS_POE.Models
         public Claim Claim { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string FileName { get; set; }
+        public string DocumentName { get; set; }  // Name of the uploaded file
 
         [Required]
-        [StringLength(500)]
-        public string FilePath { get; set; }
+        public string DocumentPath { get; set; }  // Path where the file is stored
 
         public DateTime UploadDate { get; set; } = DateTime.Now;
     }
