@@ -12,16 +12,26 @@ namespace CMCS_POE.Models
         {
         }
 
-        //public DbSet<Claim> Claims { get; set; }
-        //public DbSet<DocumentUpload> DocumentUploads { get; set; }
+        public DbSet<Claim> Claims { get; set; }
+        public DbSet<DocumentUpload> DocumentUploads { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // Specify precision and scale for HourlyRate
+            // Specify precision for HourlyRate in AppUser
             builder.Entity<AppUser>()
                    .Property(u => u.HourlyRate)
-                   .HasPrecision(18, 2); // 18 digits total, 2 decimal places
+                   .HasPrecision(18, 2);
+
+            // Specify precision for Claim HoursWorked and HourlyRate
+            builder.Entity<Claim>()
+                   .Property(c => c.HoursWorked)
+                   .HasPrecision(18, 2);
+
+            builder.Entity<Claim>()
+                   .Property(c => c.HourlyRate)
+                   .HasPrecision(18, 2);
         }
+
     }
 }
