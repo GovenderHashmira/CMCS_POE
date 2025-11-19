@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System.Security.Claims;
 
 namespace CMCS_POE.Models
 {
-    // ApplicationDbContext inherits from IdentityDbContext<AppUser>
     public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -18,12 +18,10 @@ namespace CMCS_POE.Models
         {
             base.OnModelCreating(builder);
 
-            // Specify precision for HourlyRate in AppUser
             builder.Entity<AppUser>()
                    .Property(u => u.HourlyRate)
                    .HasPrecision(18, 2);
 
-            // Specify precision for Claim HoursWorked and HourlyRate
             builder.Entity<Claim>()
                    .Property(c => c.HoursWorked)
                    .HasPrecision(18, 2);
@@ -31,7 +29,19 @@ namespace CMCS_POE.Models
             builder.Entity<Claim>()
                    .Property(c => c.HourlyRate)
                    .HasPrecision(18, 2);
-        }
 
+            builder.Entity<Claim>()
+                   .HasOne(c => c.Lecturer)          
+                   .WithMany()                        
+                   .HasForeignKey(c => c.LecturerId) 
+                   .OnDelete(DeleteBehavior.Cascade); 
+
+            builder.Entity<DocumentUpload>()
+                   .HasOne(d => d.Claim)            
+                   .WithMany(c => c.DocumentUploads) 
+                   .HasForeignKey(d => d.ClaimId)    
+                   .OnDelete(DeleteBehavior.Cascade); 
+
+        }
     }
 }

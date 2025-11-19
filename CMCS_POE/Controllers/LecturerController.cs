@@ -1,7 +1,11 @@
 ﻿using CMCS_POE.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
+using static System.Net.WebRequestMethods;
+
 
 namespace CMCS_POE.Controllers
 {
@@ -30,6 +34,11 @@ namespace CMCS_POE.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitClaim(Claim claim)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(claim);
+            }
+
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();

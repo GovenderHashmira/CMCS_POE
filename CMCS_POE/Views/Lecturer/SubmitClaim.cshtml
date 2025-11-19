@@ -20,8 +20,9 @@
     </div>
 
     <div class="form-group">
-        <label>Upload Supporting Document</label>
-        <input type="file" name="Document" class="form-control" />
+        <label asp-for="Document">Upload Supporting Document</label>
+        <input asp-for="Document" type="file" class="form-control" />
+        <span asp-validation-for="Document" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary mt-2">Submit Claim</button>
