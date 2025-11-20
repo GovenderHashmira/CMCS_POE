@@ -50,7 +50,6 @@ namespace CMCS_POE.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Approve(int claimId)
         {
-            // Find the claim by ID
             var claim = await _context.Claims.Include(c => c.Lecturer)
                                              .FirstOrDefaultAsync(c => c.Id == claimId);
             if (claim == null)
@@ -58,14 +57,11 @@ namespace CMCS_POE.Controllers
                 return NotFound();
             }
 
-            // Update claim status and approval date
             claim.Status = "Approved";
             claim.ApprovalDate = DateTime.Now;
 
-            // Save changes to the database
             await _context.SaveChangesAsync();
 
-            // Redirect back to AllClaims view
             return RedirectToAction(nameof(AllClaims));
         }
 

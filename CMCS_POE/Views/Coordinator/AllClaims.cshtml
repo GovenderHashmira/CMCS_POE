@@ -18,13 +18,15 @@
             <th>Approval Date</th>
             <th>Notes</th>
             <th>Documents</th>
+            <th>Action</th> 
         </tr>
     </thead>
+
     <tbody>
         @foreach (var claim in Model)
         {
             <tr>
-                <td>@claim.Lecturer.FirstName @claim.Lecturer.LastName</td>
+                <td>@claim.Lecturer?.FirstName @claim.Lecturer?.LastName</td>
                 <td>@claim.HoursWorked</td>
                 <td>@claim.HourlyRate.ToString("C")</td>
                 <td>@claim.TotalPayment</td>
@@ -49,6 +51,14 @@
                         <span>No documents</span>
                     }
                 </td>
+                <td>
+                    <a asp-action="ClaimDetails"
+                       asp-route-id="@claim.Id"
+                       class="btn btn-primary btn-sm">
+                        View / Manage
+                    </a>
+                </td>
+
             </tr>
         }
     </tbody>

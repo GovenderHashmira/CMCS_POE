@@ -23,7 +23,7 @@ namespace CMCS_POE.Controllers
             }
             else if (User.IsInRole("Lecturer"))
             {
-                return RedirectToAction("SubmitClaim", "Lecturer");
+                return RedirectToAction("Index", "Lecturer");
             }
             else if (User.IsInRole("Coordinator"))
             {
