@@ -53,12 +53,20 @@ namespace CMCS_POE.Controllers
                 return View(user);
             }
 
+            if (string.IsNullOrWhiteSpace(user.UserName))
+                user.UserName = user.Email?.Trim();
+
+            user.EmailConfirmed = true;
+
             var result = await _userManager.CreateAsync(user, password);
             if (result.Succeeded)
             {
                 if (!string.IsNullOrEmpty(role))
                 {
-                    await _userManager.AddToRoleAsync(user, role);
+                    if (!await _userManager.IsInRoleAsync(user, role))
+                    {
+                        await _userManager.AddToRoleAsync(user, role);
+                    }
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -66,11 +74,12 @@ namespace CMCS_POE.Controllers
 
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError(string.Empty, error.Description);
             }
+
             return View(user);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateUser(string id, AppUser updatedUser, string role)
