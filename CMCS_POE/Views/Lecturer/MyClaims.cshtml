@@ -1,53 +1,62 @@
-﻿@model IEnumerable<CMCS_POE.Models.Claim>
+﻿@model List<CMCS_POE.Models.Claim>
 
 @{
     ViewData["Title"] = "My Claims";
 }
 
 <h2>My Claims</h2>
-<hr />
 
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>Claim ID</th>
-            <th>Hours Worked</th>
-            <th>Total Payment</th>
-            <th>Status</th>
-            <th>Date Submitted</th>
-            <th>Documents</th>
-        </tr>
-    </thead>
+<div class="mb-3">
+    <a asp-action="SubmitClaim" class="btn btn-primary">Submit New Claim</a>
+    <a asp-action="Index" class="btn btn-secondary">Dashboard</a>
+</div>
 
-    <tbody>
-        @foreach (var claim in Model)
-        {
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@claim.Id</td>
-                <td>@claim.HoursWorked</td>
-                <td>R @claim.TotalPayment</td>
-                <td>@claim.Status</td>
-                <td>@claim.SubmissionDate.ToShortDateString()</td>
-
-                <td>
-                    @if (claim.DocumentUploads != null && claim.DocumentUploads.Any())
-                    {
-                        foreach (var doc in claim.DocumentUploads)
-                        {
-                            <div>
-                                <a href="@doc.DocumentPath" target="_blank">
-                                    @doc.DocumentName
-                                </a>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <span>No documents</span>
-                    }
-                </td>
-
+                <th>Claim ID</th>
+                <th>Hours Worked</th>
+                <th>Hourly Rate</th>
+                <th>Total Payment</th>
+                <th>Status</th>
+                <th>Submission Date</th>
+                <th>Documents</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var claim in Model)
+            {
+                <tr>
+                    <td>@claim.HoursWorked</td>
+                    <td>@claim.HourlyRate.ToString("C")</td>
+                    <td>@claim.TotalPayment.ToString("C")</td>
+                    <td>@claim.Status</td>
+                    <td>@claim.SubmissionDate.ToShortDateString()</td>
+                    <td>
+                        @if (claim.DocumentUploads != null && claim.DocumentUploads.Any())
+                        {
+                            <ul>
+                                @foreach (var doc in claim.DocumentUploads)
+                                {
+                                    <li>
+                                        <a href="@doc.DocumentPath" target="_blank">@doc.DocumentName</a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No documents</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No claims submitted yet.</p>
+}

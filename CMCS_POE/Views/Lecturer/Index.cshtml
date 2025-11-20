@@ -1,0 +1,44 @@
+﻿@model List<CMCS_POE.Models.Claim>
+
+@{
+    ViewData["Title"] = "Lecturer Dashboard";
+}
+
+<h2>Lecturer Dashboard</h2>
+
+<div class="mb-3">
+    <a asp-action="SubmitClaim" class="btn btn-primary">Submit New Claim</a>
+    <a asp-action="MyClaims" class="btn btn-info">My Claims</a>
+</div>
+
+<hr />
+
+@if (Model != null && Model.Any())
+{
+    <h3>Recent Claims</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Hours Worked</th>
+                <th>Total Payment</th>
+                <th>Status</th>
+                <th>Submission Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in Model)
+            {
+                <tr>
+                    <td>@claim.HoursWorked</td>
+                    <td>@claim.TotalPayment.ToString("C")</td>
+                    <td>@claim.Status</td>
+                    <td>@claim.SubmissionDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No claims submitted yet.</p>
+}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CMCS_POE.Models
 {
@@ -11,11 +12,12 @@ namespace CMCS_POE.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public string LecturerId { get; set; }
+        // Do not bind LecturerId from the form — we assign it in controller
+        [BindNever]
+        public string? LecturerId { get; set; }
 
-        [ForeignKey("LecturerId")]
-        public AppUser Lecturer { get; set; }
+        [BindNever]
+        public AppUser? Lecturer { get; set; }
 
         [Required]
         [Range(0, 180, ErrorMessage = "Hours worked cannot exceed 180 per month.")]
@@ -30,21 +32,22 @@ namespace CMCS_POE.Models
         public decimal TotalPayment { get; set; }
 
         [Required]
-        public string Status { get; set; } = "Pending"; 
+        public string Status { get; set; } = "Pending";
 
         public DateTime SubmissionDate { get; set; } = DateTime.Now;
-
         public DateTime? ApprovalDate { get; set; }
-
         public string? Notes { get; set; }
 
-        public ICollection<DocumentUpload> DocumentUploads { get; set; }
+        public ICollection<DocumentUpload> DocumentUploads { get; set; } = new List<DocumentUpload>();
 
         [NotMapped]
-        public IFormFile Document { get; set; }
+        public IFormFile? Document { get; set; }
 
-        public string DocumentName { get; set; }
-        public string DocumentPath { get; set; }
+        // Make these nullable OR mark BindNever so model binder doesn't require them
+        [BindNever]
+        public string? DocumentName { get; set; }
 
+        [BindNever]
+        public string? DocumentPath { get; set; }
     }
 }
