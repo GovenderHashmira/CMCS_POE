@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.IO;
 
 namespace CMCS_POE.Controllers
 {
@@ -129,5 +132,59 @@ namespace CMCS_POE.Controllers
 
             return View(updatedUser);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateClaimsReport()
+        {
+            // Get all claims (or filter by date if needed)
+            var claims = await _context.Claims
+                .Include(c => c.Lecturer)
+                .Include(c => c.DocumentUploads)
+                .ToListAsync();
+
+            using (var stream = new MemoryStream())
+            {
+                Document doc = new Document(PageSize.A4, 25, 25, 30, 30);
+                PdfWriter.GetInstance(doc, stream);
+                doc.Open();
+
+                // Add Title
+                var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
+                doc.Add(new Paragraph("Claims Report", titleFont));
+                doc.Add(new Paragraph("Generated on: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm")));
+                doc.Add(new Paragraph(" ")); // blank line
+
+                // Add Table
+                PdfPTable table = new PdfPTable(6);
+                table.WidthPercentage = 100;
+                table.SetWidths(new float[] { 10f, 15f, 15f, 15f, 20f, 25f });
+
+                // Table Header
+                var headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
+                table.AddCell(new PdfPCell(new Phrase("Claim ID", headerFont)));
+                table.AddCell(new PdfPCell(new Phrase("Lecturer", headerFont)));
+                table.AddCell(new PdfPCell(new Phrase("Hours Worked", headerFont)));
+                table.AddCell(new PdfPCell(new Phrase("Hourly Rate", headerFont)));
+                table.AddCell(new PdfPCell(new Phrase("Total Payment", headerFont)));
+                table.AddCell(new PdfPCell(new Phrase("Status", headerFont)));
+
+                // Table Data
+                foreach (var claim in claims)
+                {
+                    table.AddCell(claim.Id.ToString());
+                    table.AddCell($"{claim.Lecturer.FirstName} {claim.Lecturer.LastName}");
+                    table.AddCell(claim.HoursWorked.ToString());
+                    table.AddCell(claim.HourlyRate.ToString("C"));
+                    table.AddCell(claim.TotalPayment.ToString("C"));
+                    table.AddCell(claim.Status);
+                }
+
+                doc.Add(table);
+                doc.Close();
+
+                return File(stream.ToArray(), "application/pdf", "ClaimsReport.pdf");
+            }
+        }
+
     }
 }
