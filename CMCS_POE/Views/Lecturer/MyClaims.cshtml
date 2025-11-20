@@ -1,0 +1,53 @@
+﻿@model IEnumerable<CMCS_POE.Models.Claim>
+
+@{
+    ViewData["Title"] = "My Claims";
+}
+
+<h2>My Claims</h2>
+<hr />
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Claim ID</th>
+            <th>Hours Worked</th>
+            <th>Total Payment</th>
+            <th>Status</th>
+            <th>Date Submitted</th>
+            <th>Documents</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var claim in Model)
+        {
+            <tr>
+                <td>@claim.Id</td>
+                <td>@claim.HoursWorked</td>
+                <td>R @claim.TotalPayment</td>
+                <td>@claim.Status</td>
+                <td>@claim.SubmissionDate.ToShortDateString()</td>
+
+                <td>
+                    @if (claim.DocumentUploads != null && claim.DocumentUploads.Any())
+                    {
+                        foreach (var doc in claim.DocumentUploads)
+                        {
+                            <div>
+                                <a href="@doc.DocumentPath" target="_blank">
+                                    @doc.DocumentName
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <span>No documents</span>
+                    }
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

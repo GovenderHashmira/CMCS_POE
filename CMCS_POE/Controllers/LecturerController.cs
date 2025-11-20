@@ -15,18 +15,15 @@ namespace CMCS_POE.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
-
         public LecturerController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
-
         public IActionResult Index()
         {
             return View();
         }
-
         public IActionResult SubmitClaim()
         {
             return View();
@@ -93,6 +90,19 @@ namespace CMCS_POE.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> MyClaims()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
+            var claims = await _context.Claims
+                .Where(c => c.LecturerId == user.Id)
+                .Include(c => c.DocumentUploads)
+                .ToListAsync();
+
+            return View(claims);
         }
     }
 }
