@@ -10,6 +10,8 @@ namespace CMCS_POE.Models
 
         public decimal HourlyRate { get; set; }
 
+        public ICollection<Claim> Claims { get; set; }
+
         public string? RoleName { get; set; }
     }
 }

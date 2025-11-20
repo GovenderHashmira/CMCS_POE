@@ -31,10 +31,10 @@ namespace CMCS_POE.Models
                    .HasPrecision(18, 2);
 
             builder.Entity<Claim>()
-                   .HasOne(c => c.Lecturer)          
-                   .WithMany()                        
-                   .HasForeignKey(c => c.LecturerId) 
-                   .OnDelete(DeleteBehavior.Cascade); 
+                   .HasOne(c => c.Lecturer)
+                   .WithMany(u => u.Claims)  
+                   .HasForeignKey(c => c.LecturerId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<DocumentUpload>()
                    .HasOne(d => d.Claim)            

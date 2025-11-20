@@ -1,0 +1,6 @@
+INSERT INTO Claims (Id, LecturerId, HoursWorked, HourlyRate, TotalPayment, Status, SubmissionDate) VALUES (3, 'cb667757-d467-4eda-9d37-9680429092ce', 10,00, 250,00, 2500,00, 'Pending', '2025-11-20 13:53:11');
+INSERT INTO Claims (Id, LecturerId, HoursWorked, HourlyRate, TotalPayment, Status, SubmissionDate) VALUES (4, 'cb667757-d467-4eda-9d37-9680429092ce', 10,00, 250,00, 2500,00, 'Pending', '2025-11-20 13:53:21');
+INSERT INTO Claims (Id, LecturerId, HoursWorked, HourlyRate, TotalPayment, Status, SubmissionDate) VALUES (8, 'cb667757-d467-4eda-9d37-9680429092ce', 140,00, 15,00, 2100,00, 'Approved', '2025-11-20 18:10:49');
+INSERT INTO Claims (Id, LecturerId, HoursWorked, HourlyRate, TotalPayment, Status, SubmissionDate) VALUES (9, 'cb667757-d467-4eda-9d37-9680429092ce', 20,00, 15,00, 300,00, 'Rejected', '2025-11-20 20:06:27');
+INSERT INTO DocumentUploads (Id, ClaimId, DocumentName, DocumentPath, UploadDate) VALUES (1, 9, 'Example documentation that can be uploaded.pdf', '/uploads/feb7555c-b3c0-4133-b6f7-d2c6bc8212c2_Example documentation that can be uploaded.pdf', '2025-11-20 20:06:27');
+INSERT INTO Claims (Id, LecturerId, HoursWorked, HourlyRate, TotalPayment, Status, SubmissionDate) VALUES (10, 'bfe2412a-733b-4c7f-b145-52d1dfe8cdae', 10,00, 5000,00, 50000,00, 'Pending', '2025-11-20 20:10:07');
