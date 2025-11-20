@@ -12,7 +12,6 @@ namespace CMCS_POE.Models
         [Key]
         public int Id { get; set; }
 
-        // Do not bind LecturerId from the form — we assign it in controller
         [BindNever]
         public string? LecturerId { get; set; }
 
@@ -43,7 +42,6 @@ namespace CMCS_POE.Models
         [NotMapped]
         public IFormFile? Document { get; set; }
 
-        // Make these nullable OR mark BindNever so model binder doesn't require them
         [BindNever]
         public string? DocumentName { get; set; }
 
