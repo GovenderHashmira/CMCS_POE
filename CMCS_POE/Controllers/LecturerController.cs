@@ -44,54 +44,39 @@ namespace CMCS_POE.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitClaim(Claim claim)
         {
-            Console.WriteLine("➡ ENTER SubmitClaim POST");
-
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("❌ ModelState is invalid");
                 return View(claim);
             }
 
-            // Get the currently logged-in user
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
                 return Unauthorized();
 
-            // Initialize the DocumentUploads collection
             claim.DocumentUploads = new List<DocumentUpload>();
 
-            // Assign user-related info
             claim.LecturerId = user.Id;
             claim.HourlyRate = user.HourlyRate;
             claim.SubmissionDate = DateTime.Now;
             claim.Status = "Pending";
             claim.TotalPayment = claim.HoursWorked * claim.HourlyRate;
-
-            // Temporarily set document fields to null
             claim.DocumentName = null;
             claim.DocumentPath = null;
 
-            // Add claim to database
             _context.Claims.Add(claim);
-            Console.WriteLine("✔ Claim added to context");
 
             try
             {
                 await _context.SaveChangesAsync();
-                Console.WriteLine("✔ Claim saved to database, ID: " + claim.Id);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine("❌ Exception while saving claim: " + ex.Message);
                 ModelState.AddModelError("", "Unable to save claim. Please try again.");
                 return View(claim);
             }
 
-            // Handle document upload, if any
             if (claim.Document != null && claim.Document.Length > 0)
             {
-                Console.WriteLine("➡ Entering document upload block");
-
                 var allowedExtensions = new[] { ".pdf", ".docx", ".xlsx" };
                 var extension = Path.GetExtension(claim.Document.FileName).ToLower();
 
@@ -114,17 +99,14 @@ namespace CMCS_POE.Controllers
                 var uniqueFileName = $"{Guid.NewGuid()}_{claim.Document.FileName}";
                 var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                // Save the file
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await claim.Document.CopyToAsync(stream);
                 }
 
-                // Update claim fields for the document
                 claim.DocumentName = claim.Document.FileName;
                 claim.DocumentPath = "/uploads/" + uniqueFileName;
 
-                // Create DocumentUpload record
                 var upload = new DocumentUpload
                 {
                     ClaimId = claim.Id,
@@ -138,36 +120,14 @@ namespace CMCS_POE.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    Console.WriteLine("✔ DocumentUpload saved to database");
                 }
-                catch (Exception ex)
+                catch 
                 {
-                    Console.WriteLine("❌ Exception while saving document: " + ex.Message);
                     ModelState.AddModelError("", "Claim saved but document could not be uploaded.");
                     return View(claim);
                 }
             }
-
-            Console.WriteLine("➡ EXIT SubmitClaim POST");
-            return RedirectToAction(nameof(MyClaims));
-        }
-
-
-
-
-        public async Task<IActionResult> MyClaims()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
-
-            var claims = await _context.Claims
-                .Where(c => c.LecturerId == user.Id)
-                .Include(c => c.DocumentUploads) 
-                .OrderByDescending(c => c.SubmissionDate)
-                .ToListAsync();
-
-            return View(claims);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
