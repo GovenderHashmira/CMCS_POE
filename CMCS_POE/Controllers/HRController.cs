@@ -19,7 +19,7 @@ namespace CMCS_POE.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
             return View(users);
         }
 
@@ -70,7 +70,7 @@ namespace CMCS_POE.Controllers
             }
             return View(user);
         }
-        // POST: HR/UpdateUser/{id}
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateUser(string id, AppUser updatedUser, string role)
@@ -91,17 +91,17 @@ namespace CMCS_POE.Controllers
                 return NotFound();
             }
 
-            // Update user properties
             user.FirstName = updatedUser.FirstName;
             user.LastName = updatedUser.LastName;
             user.Email = updatedUser.Email;
             user.UserName = updatedUser.Email;
+            user.HourlyRate = updatedUser.HourlyRate;
 
             var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
             {
-                // Update role
+
                 var currentRoles = await _userManager.GetRolesAsync(user);
                 await _userManager.RemoveFromRolesAsync(user, currentRoles);
 
@@ -113,7 +113,6 @@ namespace CMCS_POE.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // If errors, show them
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError("", error.Description);

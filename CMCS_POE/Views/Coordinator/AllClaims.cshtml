@@ -12,6 +12,7 @@
             <th>Lecturer</th>
             <th>Hours Worked</th>
             <th>Hourly Rate</th>
+            <th>Total Payment</th>
             <th>Status</th>
             <th>Submission Date</th>
             <th>Approval Date</th>
@@ -26,6 +27,7 @@
                 <td>@claim.Lecturer.FirstName @claim.Lecturer.LastName</td>
                 <td>@claim.HoursWorked</td>
                 <td>@claim.HourlyRate.ToString("C")</td>
+                <td>@claim.TotalPayment</td>
                 <td>@claim.Status</td>
                 <td>@claim.SubmissionDate.ToString("dd/MM/yyyy")</td>
                 <td>@(claim.ApprovalDate.HasValue? claim.ApprovalDate.Value.ToString("dd/MM/yyyy") : "-")</td>

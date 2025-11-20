@@ -28,6 +28,12 @@
     </div>
 
     <div class="form-group">
+        <label asp-for="HourlyRate"></label>
+        <input asp-for="HourlyRate" class="form-control" />
+        <span asp-validation-for="HourlyRate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
         <label>Role</label>
         <select name="role" class="form-control">
             <option value="HR">HR</option>

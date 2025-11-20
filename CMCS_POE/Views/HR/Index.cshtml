@@ -16,6 +16,7 @@
             <th>Last Name</th>
             <th>Email</th>
             <th>Roles</th>
+            <th>Hourly Rate</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -28,6 +29,7 @@
             <td>@user.LastName</td>
             <td>@user.Email</td>
             <td>@string.Join(", ", roles)</td>
+            <td>@user.HourlyRate</td>
             <td>
                 <a asp-action="UpdateUser" asp-route-id="@user.Id" class="btn btn-sm btn-primary">Edit</a>
             </td>
