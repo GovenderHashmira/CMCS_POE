@@ -32,9 +32,9 @@ namespace CMCS_POE.Models
 
             builder.Entity<Claim>()
                    .HasOne(c => c.Lecturer)
-                   .WithMany(u => u.Claims)  
-                   .HasForeignKey(c => c.LecturerId)
-                   .OnDelete(DeleteBehavior.Restrict);
+                   .WithMany(u => u.Claims)
+                   .IsRequired(false)       
+                   .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<DocumentUpload>()
                    .HasOne(d => d.Claim)            
